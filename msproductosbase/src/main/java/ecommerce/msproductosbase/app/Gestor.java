@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +34,7 @@ public class Gestor {
 	private String apellido;
 	
 	@OneToMany(mappedBy = "gestor", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+	@JsonManagedReference
 	private List<ProductoBase> productosBase;
 	
 	//---------------- Getters y Setters --------------------------------------------------
@@ -66,12 +69,7 @@ public class Gestor {
 
 	public void setProductosBase(List<ProductoBase> productosBase) {
 		this.productosBase = productosBase;
-	}
-	
-	public void agregarProductoBase(ProductoBase productoBase) {
-		productoBase.setGestor(this);
-		this.productosBase.add(productoBase);
-	}
+	}	
 	
 	//---------------- Constructores --------------------------------------------------	
 
@@ -104,5 +102,9 @@ public class Gestor {
 	}	
 	
 	
-
+	//--------------- Métodos -------------------------------------------------------
+	public void agregarProductoBase(ProductoBase productoBase) {
+		productoBase.setGestor(this);
+		this.productosBase.add(productoBase);
+	}
 }

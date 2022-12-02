@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 
 import ecommerce.msproductosbase.app.Gestor;
+import ecommerce.msproductosbase.app.PosiblePersonalizacion;
 import ecommerce.msproductosbase.app.ProductoBase;
 import ecommerce.msproductosbase.app.RepoGestor;
 
@@ -24,7 +25,7 @@ public class MsproductosbaseApplication {
 	@Bean
 	public CommandLineRunner init(RepoGestor repoGestor) {
 		
-		config.exposeIdsFor(Gestor.class, ProductoBase.class);
+		config.exposeIdsFor(Gestor.class, ProductoBase.class, PosiblePersonalizacion.class);
 		
 		return (cosas) -> {
 			
@@ -34,8 +35,15 @@ public class MsproductosbaseApplication {
 			ProductoBase productoBase1 = new ProductoBase("remera", 1200d, "remera blanca lisa", "3 dias");
 			ProductoBase productoBase2 = new ProductoBase("campera", 2400d, "campera azul base", "7 dias");
 			
+			PosiblePersonalizacion posiblePersonalizacion1 = new PosiblePersonalizacion("frente", "texto blanco y negro");
+			PosiblePersonalizacion posiblePersonalizacion2 = new PosiblePersonalizacion("espalda", "imagen a color");
+			
+					
 			gestor1.agregarProductoBase(productoBase1);
 			gestor2.agregarProductoBase(productoBase2);
+			
+			productoBase1.agregarPosiblePersonalizacion(posiblePersonalizacion1);
+			productoBase2.agregarPosiblePersonalizacion(posiblePersonalizacion2);
 			
 			repoGestor.save(gestor1);
 			repoGestor.save(gestor2);

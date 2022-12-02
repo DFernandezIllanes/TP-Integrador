@@ -1,5 +1,9 @@
 package ecommerce.msproductosbase.app;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,7 +11,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import ecommerce.msproductosbase.app.dtos.DTOProductoBase;
 
 @Entity
 @Table(name = "producto_base")
@@ -32,7 +42,12 @@ public class ProductoBase {
 	
 	@ManyToOne
 	@JoinColumn(name = "gestor_id", referencedColumnName = "id")
+	@JsonBackReference
 	private Gestor gestor;
+	
+	@OneToMany(mappedBy = "productoBase", cascade = {CascadeType.PERSIST, CascadeType.MERGE} ) //
+	@JsonManagedReference
+	private List<PosiblePersonalizacion> posiblesPersonalizaciones;
 	
 	//------------------- Getters y Setters ------------------------------------------------
 
@@ -85,10 +100,19 @@ public class ProductoBase {
 		this.gestor = gestor;
 	}
 	
+	public List<PosiblePersonalizacion> getPosiblesPersonalizaciones() {
+		return new ArrayList<PosiblePersonalizacion>(this.posiblesPersonalizaciones);
+	}
+
+	public void setPosiblesPersonalizaciones(List<PosiblePersonalizacion> posiblesPersonalizaciones) {
+		this.posiblesPersonalizaciones = posiblesPersonalizaciones;
+	}
+	
 	//------------------- Constructores ------------------------------------------------
 
 	public ProductoBase() {
 		super();
+		this.posiblesPersonalizaciones = new ArrayList<>();
 	}	
 
 	public ProductoBase(String nombre, Double precioBase, String descripcion, String tiempoDeFabricacion) {
@@ -97,6 +121,7 @@ public class ProductoBase {
 		this.precioBase = precioBase;
 		this.descripcion = descripcion;
 		this.tiempoDeFabricacion = tiempoDeFabricacion;
+		this.posiblesPersonalizaciones = new ArrayList<>();
 	}
 
 	public ProductoBase(String nombre, Double precioBase, String descripcion, String tiempoDeFabricacion,
@@ -107,6 +132,7 @@ public class ProductoBase {
 		this.descripcion = descripcion;
 		this.tiempoDeFabricacion = tiempoDeFabricacion;
 		this.gestor = gestor;
+		this.posiblesPersonalizaciones = new ArrayList<>();
 	}
 
 	public ProductoBase(Long id, String nombre, Double precioBase, String descripcion, String tiempoDeFabricacion) {
@@ -116,6 +142,7 @@ public class ProductoBase {
 		this.precioBase = precioBase;
 		this.descripcion = descripcion;
 		this.tiempoDeFabricacion = tiempoDeFabricacion;
+		this.posiblesPersonalizaciones = new ArrayList<>();
 	}
 
 	public ProductoBase(Long id, String nombre, Double precioBase, String descripcion, String tiempoDeFabricacion,
@@ -127,6 +154,30 @@ public class ProductoBase {
 		this.descripcion = descripcion;
 		this.tiempoDeFabricacion = tiempoDeFabricacion;
 		this.gestor = gestor;
+		this.posiblesPersonalizaciones = new ArrayList<>();
+	}
+
+	public ProductoBase(Long id, String nombre, Double precioBase, String descripcion, String tiempoDeFabricacion,
+			Gestor gestor, List<PosiblePersonalizacion> posiblesPersonalizaciones) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.precioBase = precioBase;
+		this.descripcion = descripcion;
+		this.tiempoDeFabricacion = tiempoDeFabricacion;
+		this.gestor = gestor;
+		this.posiblesPersonalizaciones = posiblesPersonalizaciones;
+	}
+	
+	//-------------- Métodos ----------------------------------------------------------------
+	
+	public void agregarPosiblePersonalizacion(PosiblePersonalizacion posiblePersonalizacion) {
+		posiblePersonalizacion.setProductoBase(this);
+		this.posiblesPersonalizaciones.add(posiblePersonalizacion);
+	}
+	
+	public DTOProductoBase toDTOProductoBase() {
+		return new DTOProductoBase(this.nombre, this.precioBase, this.tiempoDeFabricacion);
 	}
 	
 //	public void actualizar(ProductoBase producto) {
